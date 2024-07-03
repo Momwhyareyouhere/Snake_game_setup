@@ -46,6 +46,10 @@
         <label for="gameOverBorder">Game Over on Hit Border? (Y/N):</label><br>
         <input type="text" id="gameOverBorder" name="gameOverBorder" required><br><br>
 
+
+        <label for="runningProjectsChannelId">Running projects channel id:</label><br>
+        <input type="text" id="runningProjectsChannelId" name="runningProjectsChannelId"><br><br>
+
         <button type="button" onclick="generateConfig()">Generate Config</button>
         <button type="button" onclick="copyToClipboard()">Copy to Clipboard</button>
         <a id="downloadLink" style="display:none;">Download Config</a>
@@ -64,6 +68,7 @@
             const fieldSize = document.getElementById('fieldSize').value;
             const gameOverSelf = document.getElementById('gameOverSelf').value.toUpperCase() === 'Y';
             const gameOverBorder = document.getElementById('gameOverBorder').value.toUpperCase() === 'Y';
+            const runningProjectsChannelId = document.getElementById('runningProjectsChannelId').value;
 
             configContent = `
 ##################################
@@ -95,6 +100,9 @@ add_border = ${addBorder}
 
 # If you set true and if you hit the border it will gonna show game_over_screen
 hit_border_game_over = ${gameOverBorder}
+
+# Running projects channel id
+running_projects_channel_id = ${runningProjectsChannelId}
             `.trim();
 
             document.getElementById('configOutput').innerText = configContent;
