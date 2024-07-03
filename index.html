@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Setup</h1>
+    <form id="configForm">
+        <label for="ownerId">Owner ID:</label><br>
+        <input type="text" id="ownerId" name="ownerId" required><br><br>
+
+        <label for="botToken">Bot Token:</label><br>
+        <input type="text" id="botToken" name="botToken" required><br><br>
+
+        <label for="showScore">Add Score? (Y/N):</label><br>
+        <input type="text" id="showScore" name="showScore" required><br><br>
+
+        <label for="addBorder">Add Border? (Y/N):</label><br>
+        <input type="text" id="addBorder" name="addBorder" required><br><br>
+
+        <label for="fieldSize">Field Size:</label><br>
+        <input type="number" id="fieldSize" name="fieldSize" required><br><br>
+
+        <label for="gameOverSelf">Game Over on Hit Yourself? (Y/N):</label><br>
+        <input type="text" id="gameOverSelf" name="gameOverSelf" required><br><br>
+
+        <label for="gameOverBorder">Game Over on Hit Border? (Y/N):</label><br>
+        <input type="text" id="gameOverBorder" name="gameOverBorder" required><br><br>
+
+        <button type="button" onclick="generateConfig()">Generate Config</button>
+        <button type="button" onclick="copyToClipboard()">Copy to Clipboard</button>
+        <a id="downloadLink" style="display:none;">Download Config</a>
+    </form>
+
+    <pre id="configOutput"></pre>
+
+    <script>
+        let configContent = '';
+
+        function generateConfig() {
+            const ownerId = document.getElementById('ownerId').value;
+            const botToken = document.getElementById('botToken').value;
+            const showScore = document.getElementById('showScore').value.toUpperCase() === 'Y';
+            const addBorder = document.getElementById('addBorder').value.toUpperCase() === 'Y';
+            const fieldSize = document.getElementById('fieldSize').value;
+            const gameOverSelf = document.getElementById('gameOverSelf').value.toUpperCase() === 'Y';
+            const gameOverBorder = document.getElementById('gameOverBorder').value.toUpperCase() === 'Y';
+
+            configContent = `
+##################################
+#                                #
+#     CONFIG.TXT                 #
+#     Author: Notanymorealive    #
+#                                #
+##################################
+
+# REQUIRED
+
+bot_token = ${botToken}
+
+owner_id = ${ownerId}
+
+# Extras
+
+# If you type true it will gonna show_score
+show_score = ${showScore}
+
+# You can set the field_size
+field_size = ${fieldSize}
+
+# If you want you can enable the game_over_screen
+game_over_screen = ${gameOverSelf}
+
+# If you set true it will gonna add_border
+add_border = ${addBorder}
+
+# If you set true and if you hit the border it will gonna show game_over_screen
+hit_border_game_over = ${gameOverBorder}
+            `.trim();
+
+            document.getElementById('configOutput').innerText = configContent;
+
+            const blob = new Blob([configContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = url;
+            downloadLink.download = 'config.txt';
+            downloadLink.style.display = 'block';
+            downloadLink.innerText = 'Download Config';
+        }
+
+        function copyToClipboard() {
+            if (configContent) {
+                navigator.clipboard.writeText(configContent).then(function() {
+                    alert('Configuration copied to clipboard!');
+                }, function(err) {
+                    alert('Failed to copy configuration: ', err);
+                });
+            } else {
+                alert('Please generate the configuration first.');
+            }
+        }
+    </script>
+</body>
+</html>
