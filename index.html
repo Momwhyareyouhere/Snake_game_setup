@@ -3,126 +3,653 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Setup</title>
+    <title>Snake Game Bot Setup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        :root {
+            --bg1: #0a1220;
+            --bg2: #101b33;
+            --card: #0f1830;
+            --card-2: #15233f;
+            --border: #233355;
+            --border-2: #2e4064;
+            --text: #e6ecf7;
+            --muted: #8fa0bf;
+            --green: #34d399;
+            --green-bg: rgba(52, 211, 153, 0.12);
+            --red: #f87171;
+            --red-bg: rgba(248, 113, 113, 0.12);
+            --amber: #fbbf24;
+            --amber-bg: rgba(251, 191, 36, 0.12);
+            --accent: #10b981;
         }
-        form {
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 600px at 85% -10%, rgba(16, 185, 129, 0.16), transparent 60%),
+                radial-gradient(900px 500px at -10% 110%, rgba(56, 189, 248, 0.12), transparent 55%),
+                linear-gradient(160deg, var(--bg1), var(--bg2));
+            padding: 40px 20px 60px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        header h1 {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(120deg, #34d399, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 880px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: linear-gradient(180deg, var(--card), var(--card-2));
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        .card h2 {
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
             margin-bottom: 20px;
         }
-        pre {
-            background-color: #f4f4f4;
+
+        .field { margin-bottom: 18px; }
+
+        .field label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 7px;
+        }
+
+        .field label .tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--green-bg);
+            color: var(--green);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .field label .tag.opt {
+            background: var(--amber-bg);
+            color: var(--amber);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .hint {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-2);
+            background: rgba(10, 18, 32, 0.7);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+        }
+
+        input::placeholder { color: #4b5b7d; }
+
+        .badge {
+            flex-shrink: 0;
+            min-width: 74px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--red-bg);
+            color: var(--red);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            transition: all 0.15s;
+        }
+
+        .badge.ok { background: var(--green-bg); color: var(--green); border-color: rgba(52, 211, 153, 0.3); }
+        .badge.warn { background: var(--amber-bg); color: var(--amber); border-color: rgba(251, 191, 36, 0.3); }
+
+        .toggle-btn {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            border: 1px solid var(--border-2);
+            background: rgba(10, 18, 32, 0.7);
+            color: var(--muted);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .toggle-btn:hover { color: var(--text); border-color: var(--accent); }
+
+        .range-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .range-row input[type="range"] {
+            flex: 1;
+            accent-color: var(--accent);
+            height: 6px;
+        }
+
+        .range-row output {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            min-width: 48px;
+            text-align: right;
+            color: var(--green);
+            font-size: 15px;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        button.action {
+            padding: 12px 18px;
+            border-radius: 11px;
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.15s;
+        }
+
+        button.action:active { transform: scale(0.97); }
+        button.action.primary {
+            background: linear-gradient(120deg, #10b981, #0ea5e9);
+            color: #04121c;
+            flex: 1;
+        }
+        button.action.primary:hover { opacity: 0.9; }
+        button.action.ghost {
+            background: rgba(10, 18, 32, 0.7);
+            color: var(--text);
+            border: 1px solid var(--border-2);
+        }
+        button.action.ghost:hover { border-color: var(--accent); }
+
+        /* Preview */
+        .preview-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .preview-head .status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
+        }
+
+        pre#configOutput {
+            background: rgba(6, 12, 24, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #c6d3ea;
+            white-space: pre-wrap;
+            word-break: break-all;
+            min-height: 200px;
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        pre#configOutput .warn { color: var(--amber); }
+
+        .grid-preview-wrap { margin-top: 22px; }
+
+        .grid-preview-wrap h3 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        #gridPreview {
+            display: grid;
+            width: max-content;
+            gap: 2px;
             padding: 10px;
-            border: 1px solid #ddd;
+            background: rgba(6, 12, 24, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin: 0 auto;
         }
-        button {
-            margin-right: 10px;
+
+        #gridPreview .cell {
+            border-radius: 3px;
+            background: #1c2a4d;
         }
+        #gridPreview .cell.border-cell { background: #d4a017; }
+        #gridPreview .cell.snake-cell { background: #34d399; }
+
+        .footer-note {
+            margin-top: 18px;
+            font-size: 12px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .footer-note strong { color: var(--amber); }
     </style>
 </head>
 <body>
-    <h1>Setup</h1>
-    <form id="configForm">
-        <label for="ownerId">Owner ID:</label><br>
-        <input type="text" id="ownerId" name="ownerId" required><br><br>
+    <div class="wrap">
+        <header>
+            <h1>🐍 Snake Game Bot Setup</h1>
+            <p>Generate your <code>config.txt</code> in seconds</p>
+        </header>
 
-        <label for="botToken">Bot Token:</label><br>
-        <input type="text" id="botToken" name="botToken" required><br><br>
+        <div class="grid">
+            <div class="card">
+                <h2>Configuration</h2>
 
-        <label for="showScore">Add Score? (Y/N):</label><br>
-        <input type="text" id="showScore" name="showScore" required><br><br>
+                <div class="field">
+                    <label>Owner ID <span class="tag">REQUIRED</span></label>
+                    <div class="input-row">
+                        <input type="text" id="ownerId" placeholder="Your Discord user ID" autocomplete="off">
+                        <span class="badge" id="ownerIdStatus">Empty</span>
+                    </div>
+                    <p class="hint">Your Discord ID. Right-click your profile → Copy User ID (enable Developer Mode first).</p>
+                </div>
 
-        <label for="addBorder">Add Border? (Y/N):</label><br>
-        <input type="text" id="addBorder" name="addBorder" required><br><br>
+                <div class="field">
+                    <label>Bot Token <span class="tag">REQUIRED</span></label>
+                    <div class="input-row">
+                        <input type="password" id="botToken" placeholder="Paste your bot token" autocomplete="off">
+                        <button class="toggle-btn" id="toggleToken" title="Show / hide token" type="button">👁</button>
+                        <span class="badge" id="botTokenStatus">Empty</span>
+                    </div>
+                    <p class="hint">From the Discord Developer Portal → your app → Bot → Reset Token. Keep it secret — it's the key to your bot.</p>
+                </div>
 
-        <label for="fieldSize">Field Size:</label><br>
-        <input type="number" id="fieldSize" name="fieldSize" required><br><br>
+                <div class="field">
+                    <label>Field Size <span class="tag opt">OPTIONAL</span></label>
+                    <div class="range-row">
+                        <input type="range" id="fieldSizeSlider" min="5" max="30" step="1" value="10">
+                        <output id="fieldSizeOutput">10</output>
+                    </div>
+                    <p class="hint">Grid size. Recommended 10–15 — larger grids get very tall in Discord.</p>
+                </div>
 
-        <label for="gameOverSelf">Game Over on Hit Yourself? (Y/N):</label><br>
-        <input type="text" id="gameOverSelf" name="gameOverSelf" required><br><br>
+                <div class="field">
+                    <label>Show Score? <span class="tag opt">OPTIONAL</span></label>
+                    <div class="input-row">
+                        <input type="text" id="showScore" list="boolOptions" placeholder="true / yes / on" autocomplete="off">
+                        <span class="badge" id="showScoreStatus">Empty</span>
+                    </div>
+                </div>
 
-        <label for="gameOverBorder">Game Over on Hit Border? (Y/N):</label><br>
-        <input type="text" id="gameOverBorder" name="gameOverBorder" required><br><br>
+                <div class="field">
+                    <label>Game Over on Self Hit? <span class="tag opt">OPTIONAL</span></label>
+                    <div class="input-row">
+                        <input type="text" id="gameOverSelf" list="boolOptions" placeholder="true / yes / on" autocomplete="off">
+                        <span class="badge" id="gameOverSelfStatus">Empty</span>
+                    </div>
+                </div>
 
+                <div class="field">
+                    <label>Add Border? <span class="tag opt">OPTIONAL</span></label>
+                    <div class="input-row">
+                        <input type="text" id="addBorder" list="boolOptions" placeholder="true / yes / on" autocomplete="off">
+                        <span class="badge" id="addBorderStatus">Empty</span>
+                    </div>
+                </div>
 
+                <div class="field">
+                    <label>Game Over on Border Hit? <span class="tag opt">OPTIONAL</span></label>
+                    <div class="input-row">
+                        <input type="text" id="gameOverBorder" list="boolOptions" placeholder="true / yes / on" autocomplete="off">
+                        <span class="badge" id="gameOverBorderStatus">Empty</span>
+                    </div>
+                    <p class="hint">Booleans accept: <code>y / n</code>, <code>yes / no</code>, <code>true / false</code>, <code>1 / 0</code>, <code>on / off</code>, <code>enabled / disabled</code> …</p>
+                </div>
 
-        <button type="button" onclick="generateConfig()">Generate Config</button>
-        <button type="button" onclick="copyToClipboard()">Copy to Clipboard</button>
-        <a id="downloadLink" style="display:none;">Download Config</a>
-    </form>
+                <datalist id="boolOptions">
+                    <option value="true"></option>
+                    <option value="false"></option>
+                    <option value="yes"></option>
+                    <option value="no"></option>
+                    <option value="y"></option>
+                    <option value="n"></option>
+                    <option value="1"></option>
+                    <option value="0"></option>
+                    <option value="on"></option>
+                    <option value="off"></option>
+                </datalist>
 
-    <pre id="configOutput"></pre>
+                <div class="actions">
+                    <button class="action primary" id="generateBtn" type="button">Generate Config</button>
+                    <button class="action ghost" id="copyBtn" type="button">Copy</button>
+                    <button class="action ghost" id="downloadBtn" type="button">Download</button>
+                    <button class="action ghost" id="resetBtn" type="button">Reset</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="preview-head">
+                    <h2>config.txt</h2>
+                    <span class="status"><span class="dot"></span> live preview</span>
+                </div>
+                <pre id="configOutput">Fill in the form to preview your config file…</pre>
+
+                <div class="grid-preview-wrap">
+                    <h3>Field Preview</h3>
+                    <div id="gridPreview"></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer-note">⚠️ <strong>Never share or commit config.txt</strong> — it contains your bot token.</p>
+    </div>
 
     <script>
+        const $ = (id) => document.getElementById(id);
+
+        const boolFields = ['showScore', 'gameOverSelf', 'addBorder', 'gameOverBorder'];
+
+        const TRUE_WORDS = ['y', 'yes', 'true', 't', '1', 'on', 'enabled', 'enable', 'active', 'oui', 'ja', 'yeah', 'yep'];
+        const FALSE_WORDS = ['n', 'no', 'false', 'f', '0', 'off', 'disabled', 'disable', 'inactive', 'non', 'nein', 'nope', 'nah'];
+
+        function parseBool(value) {
+            const v = String(value || '').trim().toLowerCase();
+            if (TRUE_WORDS.includes(v)) return true;
+            if (FALSE_WORDS.includes(v)) return false;
+            return null;
+        }
+
+        function setBadge(id, state, label) {
+            const el = $(id);
+            el.textContent = label;
+            el.className = 'badge' + (state === 'ok' ? ' ok' : state === 'warn' ? ' warn' : '');
+        }
+
+        function isValidOwnerId(v) {
+            return /^\d{15,20}$/.test(String(v || '').trim());
+        }
+
+        function isValidToken(v) {
+            v = String(v || '').trim();
+            return v.length >= 20 && /^[A-Za-z0-9_.-]+$/.test(v) && v.includes('.');
+        }
+
+        function buildConfig() {
+            const ownerId = $('ownerId').value.trim();
+            const botToken = $('botToken').value.trim();
+            const fieldSize = parseInt($('fieldSizeSlider').value, 10);
+
+            const bools = {};
+            for (const f of boolFields) {
+                const parsed = parseBool($(f).value);
+                bools[f] = parsed === null ? null : parsed;
+            }
+
+            const lines = [
+                '##################################',
+                '#                                #',
+                '#     CONFIG.TXT                 #',
+                '#     Author: Notanymorealive    #',
+                '#                                #',
+                '##################################',
+                '',
+                '# REQUIRED',
+                '',
+                `bot_token = ${botToken || '<your_bot_token>'}`,
+                '',
+                `owner_id = ${ownerId || '<your_owner_id>'}`,
+                '',
+                '# Extras',
+                '',
+                '# If you type true it will gonna show_score',
+                `show_score = ${bools.showScore === null ? 'true' : bools.showScore}`,
+                '',
+                '# You can set the field_size',
+                `field_size = ${fieldSize}`,
+                '',
+                '# If you want you can enable the game_over_screen',
+                `game_over_screen = ${bools.gameOverSelf === null ? 'true' : bools.gameOverSelf}`,
+                '',
+                '# If you set true it will gonna add_border',
+                `add_border = ${bools.addBorder === null ? 'true' : bools.addBorder}`,
+                '',
+                '# If you set true and if you hit the border it will gonna show game_over_screen',
+                `hit_border_game_over = ${bools.gameOverBorder === null ? 'true' : bools.gameOverBorder}`,
+                ''
+            ];
+
+            return lines.join('\n');
+        }
+
+        function updateAll() {
+            const ownerId = $('ownerId').value.trim();
+            const botToken = $('botToken').value.trim();
+
+            if (!ownerId) setBadge('ownerIdStatus', '', 'Empty');
+            else if (isValidOwnerId(ownerId)) setBadge('ownerIdStatus', 'ok', 'Valid');
+            else setBadge('ownerIdStatus', 'warn', 'Check');
+
+            if (!botToken) setBadge('botTokenStatus', '', 'Empty');
+            else if (isValidToken(botToken)) setBadge('botTokenStatus', 'ok', 'Valid');
+            else setBadge('botTokenStatus', 'warn', 'Check');
+
+            for (const f of boolFields) {
+                const parsed = parseBool($(f).value);
+                if (parsed === null) setBadge(f + 'Status', $(f).value.trim() ? 'warn' : '', parsed === null && $(f).value.trim() ? 'Invalid' : 'Empty');
+                else setBadge(f + 'Status', 'ok', parsed ? 'TRUE' : 'FALSE');
+            }
+
+            $('fieldSizeOutput').textContent = $('fieldSizeSlider').value;
+            $('configOutput').innerHTML = highlightConfig(buildConfig());
+            renderGridPreview();
+            saveState();
+        }
+
+        function highlightConfig(text) {
+            return text
+                .split('\n')
+                .map(line => {
+                    if (line.includes('<your_')) return `<span class="warn">${escapeHtml(line)}</span>`;
+                    if (line.trim().startsWith('#')) return `<span class="muted">${escapeHtml(line)}</span>`;
+                    return escapeHtml(line);
+                })
+                .join('\n');
+        }
+
+        function escapeHtml(s) {
+            const el = document.createElement('div');
+            el.textContent = s;
+            return el.innerHTML;
+        }
+
+        function renderGridPreview() {
+            const size = parseInt($('fieldSizeSlider').value, 10);
+            const addBorder = parseBool($('addBorder').value) === true;
+            const previewSize = Math.min(size, 18);
+            const cell = Math.max(8, Math.floor(260 / previewSize));
+            const container = $('gridPreview');
+
+            container.innerHTML = '';
+            container.style.gridTemplateColumns = `repeat(${previewSize}, ${cell}px)`;
+            container.style.gridAutoRows = `${cell}px`;
+
+            for (let y = 0; y < previewSize; y++) {
+                for (let x = 0; x < previewSize; x++) {
+                    const div = document.createElement('div');
+                    div.className = 'cell';
+                    if (addBorder && (x === 0 || x === previewSize - 1 || y === 0 || y === previewSize - 1)) {
+                        div.classList.add('border-cell');
+                    }
+                    if (x === Math.floor(size / 2) && y === Math.floor(size / 2)) {
+                        div.classList.add('snake-cell');
+                    }
+                    container.appendChild(div);
+                }
+            }
+        }
+
+        function saveState() {
+            const state = {
+                ownerId: $('ownerId').value,
+                botToken: $('botToken').value,
+                fieldSize: $('fieldSizeSlider').value,
+                showScore: $('showScore').value,
+                gameOverSelf: $('gameOverSelf').value,
+                addBorder: $('addBorder').value,
+                gameOverBorder: $('gameOverBorder').value
+            };
+            try { localStorage.setItem('snakeSetup', JSON.stringify(state)); } catch (e) {}
+        }
+
+        function loadState() {
+            try {
+                const state = JSON.parse(localStorage.getItem('snakeSetup') || '{}');
+                $('ownerId').value = state.ownerId || '';
+                $('botToken').value = state.botToken || '';
+                $('fieldSizeSlider').value = state.fieldSize || 10;
+                $('showScore').value = state.showScore || '';
+                $('gameOverSelf').value = state.gameOverSelf || '';
+                $('addBorder').value = state.addBorder || '';
+                $('gameOverBorder').value = state.gameOverBorder || '';
+            } catch (e) {}
+        }
+
         let configContent = '';
 
         function generateConfig() {
-            const ownerId = document.getElementById('ownerId').value;
-            const botToken = document.getElementById('botToken').value;
-            const showScore = document.getElementById('showScore').value.toUpperCase() === 'Y';
-            const addBorder = document.getElementById('addBorder').value.toUpperCase() === 'Y';
-            const fieldSize = document.getElementById('fieldSize').value;
-            const gameOverSelf = document.getElementById('gameOverSelf').value.toUpperCase() === 'Y';
-            const gameOverBorder = document.getElementById('gameOverBorder').value.toUpperCase() === 'Y';
-
-            configContent = `
-##################################
-#                                #
-#     CONFIG.TXT                 #
-#     Author: Notanymorealive    #
-#                                #
-##################################
-
-# REQUIRED
-
-bot_token = ${botToken}
-
-owner_id = ${ownerId}
-
-# Extras
-
-# If you type true it will gonna show_score
-show_score = ${showScore}
-
-# You can set the field_size
-field_size = ${fieldSize}
-
-# If you want you can enable the game_over_screen
-game_over_screen = ${gameOverSelf}
-
-# If you set true it will gonna add_border
-add_border = ${addBorder}
-
-# If you set true and if you hit the border it will gonna show game_over_screen
-hit_border_game_over = ${gameOverBorder}
-
-
-            `.trim();
-
-            document.getElementById('configOutput').innerText = configContent;
-
-            const blob = new Blob([configContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const downloadLink = document.getElementById('downloadLink');
-            downloadLink.href = url;
-            downloadLink.download = 'config.txt';
-            downloadLink.style.display = 'block';
-            downloadLink.innerText = 'Download Config';
+            configContent = buildConfig();
+            updateAll();
         }
 
         function copyToClipboard() {
-            if (configContent) {
-                navigator.clipboard.writeText(configContent).then(function() {
-                    alert('Configuration copied to clipboard!');
-                }, function(err) {
-                    alert('Failed to copy configuration: ', err);
-                });
-            } else {
-                alert('Please generate the configuration first.');
-            }
+            configContent = buildConfig();
+            navigator.clipboard.writeText(configContent).then(
+                () => { $('copyBtn').textContent = 'Copied!'; setTimeout(() => $('copyBtn').textContent = 'Copy', 1500); },
+                () => alert('Failed to copy. Use the Download button instead.')
+            );
         }
+
+        function downloadConfig() {
+            configContent = buildConfig();
+            const blob = new Blob([configContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'config.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        $('toggleToken').addEventListener('click', () => {
+            const input = $('botToken');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        });
+
+        $('fieldSizeSlider').addEventListener('input', updateAll);
+
+        for (const id of ['ownerId', 'botToken', ...boolFields]) {
+            $(id).addEventListener('input', updateAll);
+        }
+
+        $('generateBtn').addEventListener('click', generateConfig);
+        $('copyBtn').addEventListener('click', copyToClipboard);
+        $('downloadBtn').addEventListener('click', downloadConfig);
+        $('resetBtn').addEventListener('click', () => {
+            try { localStorage.removeItem('snakeSetup'); } catch (e) {}
+            $('ownerId').value = '';
+            $('botToken').value = '';
+            $('fieldSizeSlider').value = 10;
+            for (const f of boolFields) $(f).value = '';
+            updateAll();
+        });
+
+        loadState();
+        updateAll();
     </script>
 </body>
 </html>
